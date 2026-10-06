@@ -1,0 +1,23 @@
+L ENGENHARIA - PATOLOGIA ESTRUTURAL
+
+1) Para testar agora:
+   Abra o arquivo index.html no navegador.
+
+2) Para instalar no celular como aplicativo:
+   Hospede esta pasta em HTTPS (GitHub Pages, Firebase Hosting, Netlify etc.).
+   Depois abra o endereço no celular e use 'Adicionar à tela inicial' ou 'Instalar'.
+
+3) O que funciona:
+   - Foto pela câmera/galeria
+   - GPS
+   - Cadastro da estrutura/elemento
+   - Avaliação preliminar assistida
+   - Recomendações de ensaios
+   - Histórico local
+   - Exportação JSON
+   - Relatório imprimível / salvável em PDF
+   - PWA instalável
+
+4) IA pela fotografia:
+   A interface está preparada, mas a identificação automática real da patologia pela imagem
+   precisa de integração com um serviço de IA visual por backend seguro.

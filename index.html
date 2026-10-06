@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B2540">
+<title>L Engenharia | Patologia Estrutural</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+ --navy:#0B2540;--navy2:#163A5F;--gold:#C7A463;--cream:#F6F2E9;
+ --bg:#EEF2F5;--text:#172434;--muted:#6D7886;--line:#DDE3E9;--white:#fff;
+ --ok:#2B6A50;--warn:#9B6B1C;--danger:#8A2D2D;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{
+ position:sticky;top:0;z-index:30;background:rgba(11,37,64,.97);color:white;
+ display:flex;justify-content:space-between;align-items:center;padding:12px 16px;
+ box-shadow:0 8px 25px rgba(11,37,64,.15);backdrop-filter:blur(10px)
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:42px;height:42px;border:2px solid var(--gold);display:grid;place-items:center;font-weight:900;font-size:24px}
+.brand strong{display:block}.brand small{opacity:.72}
+.header-actions{display:flex;gap:8px}
+.icon-btn,.ghost,.primary,.gold{border:0;border-radius:12px;padding:11px 14px;font-weight:800}
+.icon-btn,.ghost{background:#EDF2F6;color:var(--navy)}
+header .ghost{background:rgba(255,255,255,.10);color:white}
+.primary{background:var(--navy);color:white}.gold{background:var(--gold);color:#172A3D}
+main{max-width:1120px;margin:auto;padding:18px 14px 70px}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:white;border-radius:24px;padding:24px;display:grid;grid-template-columns:1.4fr .6fr;gap:18px;box-shadow:0 20px 45px rgba(11,37,64,.18)}
+.hero h1{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:6px 0 10px}
+.hero p{color:#D9E2EA;max-width:760px;line-height:1.5}
+.kicker{font-size:12px;letter-spacing:.17em;color:var(--gold);font-weight:900}
+.hero-card{align-self:stretch;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
+.hero-card strong{font-size:34px}.hero-card span{color:#D9E2EA}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.stat{background:white;border-radius:16px;padding:16px;box-shadow:0 8px 25px rgba(11,37,64,.06)}
+.stat b{display:block;color:var(--navy);font-size:26px}.stat span{font-size:12px;color:var(--muted)}
+.nav{display:flex;gap:8px;overflow:auto;margin:14px 0 18px}
+.nav button{border:0;border-radius:999px;background:white;color:var(--navy);font-weight:800;padding:11px 16px;white-space:nowrap}
+.nav button.active{background:var(--gold)}
+.panel{display:none}.panel.active{display:block}
+.card{background:white;border-radius:20px;padding:18px;box-shadow:0 14px 34px rgba(11,37,64,.06);margin-bottom:14px}
+.card h2,.card h3{color:var(--navy);margin-top:0}
+.section-title{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.step{min-width:42px;height:42px;border-radius:13px;background:var(--navy);color:var(--gold);display:grid;place-items:center;font-weight:900}
+.section-title h3{margin:0}.section-title p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;gap:12px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+label{display:flex;flex-direction:column;gap:7px;font-weight:800;color:var(--navy);font-size:13px}
+input,select,textarea{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:white;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,99,.15)}
+textarea{min-height:90px;resize:vertical}
+.photo-zone{border:1.5px dashed #B9C4CE;border-radius:18px;background:#FAFBFC;padding:14px;text-align:center}
+.photo-zone input{display:none}.photo-btn{display:inline-flex;padding:12px 16px;border-radius:12px;background:var(--navy);color:white;font-weight:900;cursor:pointer}
+.preview{margin-top:14px}.preview img{max-width:100%;max-height:480px;object-fit:contain;border-radius:14px;background:#101820}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.result{border-left:5px solid var(--gold);background:#FCFBF7;border-radius:16px;padding:16px;margin-top:16px}
+.result h3{margin-bottom:6px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.badge{padding:6px 9px;border-radius:999px;background:#EAF0F6;color:var(--navy);font-weight:900;font-size:12px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.result-box{background:white;border:1px solid #E7EBEF;border-radius:14px;padding:13px}
+.result-box b{display:block;color:var(--navy);margin-bottom:6px}.result-box p{margin:0;color:#445364;line-height:1.45}
+.notice{background:#FFF7E9;color:#6D551F;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:12px}
+.history-item{display:grid;grid-template-columns:84px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.history-item img{width:84px;height:70px;object-fit:cover;border-radius:10px;background:#EEF2F5}
+.history-item h4{margin:0 0 4px;color:var(--navy)}.history-item p{margin:2px 0;color:var(--muted);font-size:12px}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.library{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lib-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#FBFCFD}
+.lib-card h4{margin:0 0 7px;color:var(--navy)}.lib-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+dialog{border:0;border-radius:20px;padding:0;max-width:min(800px,94vw);box-shadow:0 30px 80px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
+.modal{padding:22px;background:white}.modal h3{color:var(--navy);margin-top:0}
+.report-header{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid var(--navy);padding-bottom:10px}
+.report-photo{width:100%;max-height:420px;object-fit:contain;background:#111820;border-radius:12px;margin:14px 0}
+.report-table{width:100%;border-collapse:collapse}.report-table td{padding:8px;border-bottom:1px solid #E7EBEF;vertical-align:top}.report-table td:first-child{width:34%;font-weight:900;color:var(--navy)}
+.report-box{background:#F7F9FB;border-radius:12px;padding:12px;margin-top:10px}
+.small{font-size:12px;color:var(--muted)}
+.footer{margin-top:20px;text-align:center;color:var(--muted);font-size:12px}
+.hidden{display:none!important}
+@media(max-width:800px){
+ .hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
+ .grid.two,.grid.three,.result-grid,.library{grid-template-columns:1fr}
+ .history-item{grid-template-columns:64px 1fr}.history-item img{width:64px;height:64px}.history-item .actions{grid-column:1/-1}
+}
+@media print{
+ body *{visibility:hidden!important}
+ #reportDialog,#reportDialog *{visibility:visible!important}
+ #reportDialog{position:absolute;inset:0;width:100%;max-width:none;box-shadow:none}
+ .no-print{display:none!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">L</div>
+    <div><strong>L Engenharia</strong><small>Patologia Estrutural</small></div>
+  </div>
+  <div class="header-actions">
+    <button id="installBtn" class="ghost hidden">Instalar</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="kicker">INSPEÇÃO • REGISTRO • DIAGNÓSTICO PRELIMINAR</div>
+      <h1>Patologia estrutural na palma da mão.</h1>
+      <p>Registre a ocorrência, fotografe, classifique a manifestação, receba recomendações técnicas e gere um relatório preliminar em poucos passos.</p>
+    </div>
+    <div class="hero-card">
+      <span>Fluxo rápido de campo</span>
+      <strong>Foto → avaliação → relatório</strong>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><b id="countTotal">0</b><span>inspeções salvas</span></div>
+    <div class="stat"><b id="countHigh">0</b><span>nível alto/crítico</span></div>
+    <div class="stat"><b>8</b><span>manifestações cadastradas</span></div>
+    <div class="stat"><b>PDF</b><span>relatório pelo navegador</span></div>
+  </section>
+
+  <nav class="nav">
+    <button class="active" data-panel="nova">Nova inspeção</button>
+    <button data-panel="historico">Histórico</button>
+    <button data-panel="biblioteca">Biblioteca</button>
+    <button data-panel="sobre">Sobre</button>
+  </nav>
+
+  <section id="nova" class="panel active">
+    <div class="card">
+      <div class="section-title"><span class="step">01</span><div><h3>Identificação</h3><p>Cadastre a estrutura e o ponto inspecionado.</p></div></div>
+      <div class="grid two">
+        <label>Obra / estrutura<input id="obra" placeholder="Ex.: OAE 109, Edifício..." required></label>
+        <label>Código / referência<input id="codigo" placeholder="Ex.: Apoio 15 / eixo 3"></label>
+        <label>Tipo de estrutura
+          <select id="tipo"><option value="">Selecione</option><option>Ponte / viaduto</option><option>Túnel</option><option>Edificação</option><option>Contenção</option><option>Fundação</option><option>Outro</option></select>
+        </label>
+        <label>Elemento
+          <select id="elemento"><option value="">Selecione</option><option>Viga</option><option>Pilar</option><option>Laje</option><option>Bloco / fundação</option><option>Travessa</option><option>Encontro</option><option>Parede / túnel</option><option>Aparelho de apoio</option><option>Outro</option></select>
+        </label>
+        <label>Ambiente
+          <select id="ambiente"><option>Externo</option><option>Interno</option><option>Industrial</option><option>Marinho / agressivo</option><option>Subterrâneo</option><option>Úmido / infiltração</option></select>
+        </label>
+        <label>Localização / trecho<input id="local" placeholder="Ex.: face norte, km, eixo..."></label>
+      </div>
+      <div class="actions">
+        <button type="button" id="gpsBtn" class="ghost">📍 Capturar GPS</button>
+        <span id="gpsText" class="small"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="step">02</span><div><h3>Foto da ocorrência</h3><p>Use a câmera traseira do celular ou selecione uma imagem.</p></div></div>
+      <div class="photo-zone">
+        <input id="foto" type="file" accept="image/*" capture="environment">
+        <label class="photo-btn" for="foto">📷 Tirar / selecionar foto</label>
+        <div id="preview" class="preview hidden">
+          <img id="previewImg" alt="Foto da inspeção">
+          <div class="actions" style="justify-content:center"><button id="removerFoto" type="button" class="ghost">Remover foto</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="step">03</span><div><h3>Avaliação preliminar</h3><p>Confirme a manifestação observada em campo.</p></div></div>
+      <div class="grid two">
+        <label>Manifestação
+          <select id="patologia"><option value="">Selecione</option><option>Fissura / trinca</option><option>Corrosão aparente</option><option>Armadura exposta</option><option>Desplacamento do cobrimento</option><option>Infiltração / umidade</option><option>Eflorescência</option><option>Segregação / ninho de concretagem</option><option>Deterioração superficial</option></select>
+        </label>
+        <label>Nível de atenção visual
+          <select id="severidade"><option value="">Selecione</option><option>Baixo</option><option>Moderado</option><option>Alto</option><option>Crítico</option></select>
+        </label>
+        <label>Abertura de fissura (mm)<input id="abertura" type="number" min="0" step="0.01" placeholder="Ex.: 0,35"></label>
+        <label>Área afetada estimada (m²)<input id="area" type="number" min="0" step="0.01" placeholder="Ex.: 1,50"></label>
+      </div>
+      <label style="margin-top:12px">Observações<textarea id="obs" placeholder="Descreva umidade, som cavo, evolução, exposição de armadura, origem aparente..."></textarea></label>
+      <div class="actions">
+        <button type="button" id="avaliar" class="primary">Avaliar ocorrência</button>
+        <button type="button" id="ia" class="gold">Análise por IA da foto</button>
+      </div>
+      <div id="resultado" class="result hidden">
+        <div class="badges"><span id="badgePatologia" class="badge"></span><span id="badgeSeveridade" class="badge"></span></div>
+        <h3 id="tituloResultado"></h3>
+        <div class="result-grid">
+          <div class="result-box"><b>Possíveis causas</b><p id="causas"></p></div>
+          <div class="result-box"><b>Ensaios recomendados</b><p id="ensaios"></p></div>
+          <div class="result-box"><b>Conduta sugerida</b><p id="conduta"></p></div>
+        </div>
+        <div class="notice">A avaliação é preliminar e deve ser validada por profissional habilitado. Quando necessário, complemente com inspeção detalhada, ensaios, projetos e histórico da estrutura.</div>
+        <div class="actions">
+          <button type="button" id="salvar" class="primary">Salvar inspeção</button>
+          <button type="button" id="relatorio" class="ghost">Gerar relatório</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="historico" class="panel">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><h2 style="margin-bottom:4px">Histórico</h2><div class="small">As inspeções ficam salvas neste dispositivo.</div></div>
+        <button id="exportar" class="ghost">Exportar dados</button>
+      </div>
+      <div id="listaHistorico" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <section id="biblioteca" class="panel">
+    <div class="card">
+      <h2>Biblioteca rápida</h2>
+      <div class="library">
+        <div class="lib-card"><h4>Fissura / trinca</h4><p>Registrar abertura, orientação, extensão, localização e indícios de evolução antes de definir causa.</p></div>
+        <div class="lib-card"><h4>Corrosão</h4><p>Investigar cobrimento, carbonatação, cloretos, umidade, potencial de corrosão e perda de seção.</p></div>
+        <div class="lib-card"><h4>Desplacamento</h4><p>Mapear área, risco de queda, som cavo, condição das armaduras e causa da perda de aderência.</p></div>
+        <div class="lib-card"><h4>Infiltração</h4><p>Identificar a origem da água antes do tratamento superficial e avaliar reflexos sobre a durabilidade.</p></div>
+        <div class="lib-card"><h4>Segregação</h4><p>Verificar profundidade, continuidade, cobrimento, aderência e possível comprometimento local do concreto.</p></div>
+        <div class="lib-card"><h4>Eflorescência</h4><p>Relacionar depósitos à movimentação de água e investigar percolação, sais, lixiviação e fissuras associadas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sobre" class="panel">
+    <div class="card">
+      <h2>L Engenharia — Patologia Estrutural</h2>
+      <p>Aplicativo de apoio a inspeções de campo em estruturas de concreto armado.</p>
+      <p class="small">Esta versão funciona sem conta e sem banco de dados em nuvem. A análise automática real da fotografia por IA exige conexão com um serviço externo por meio de um backend seguro.</p>
+    </div>
+  </section>
+
+  <div class="footer">L Engenharia • inspeção e diagnóstico preliminar • versão MVP</div>
+</main>
+
+<dialog id="iaDialog">
+  <div class="modal">
+    <h3>Análise automática por foto</h3>
+    <p>O aplicativo já possui o fluxo e o botão de análise, mas esta versão <strong>não simula um diagnóstico automático</strong>. Para reconhecer fissura, corrosão, desplacamento e outras manifestações diretamente pela foto, é necessário conectar um serviço de IA visual.</p>
+    <p>Enquanto isso, a foto fica vinculada à inspeção e o engenheiro confirma a manifestação observada.</p>
+    <div class="actions"><button id="fecharIA" class="primary">Entendi</button></div>
+  </div>
+</dialog>
+
+<dialog id="reportDialog">
+  <div class="modal" id="reportContent">
+    <div class="report-header"><div><h2 style="margin:0;color:var(--navy)">L Engenharia</h2><div class="small">Relatório preliminar de inspeção</div></div><div id="dataRelatorio" class="small"></div></div>
+    <div id="corpoRelatorio"></div>
+    <div class="notice">Documento preliminar. Validar por profissional habilitado antes de uso técnico definitivo.</div>
+    <div class="actions no-print"><button id="imprimir" class="primary">Imprimir / Salvar PDF</button><button id="fecharRelatorio" class="ghost">Fechar</button></div>
+  </div>
+</dialog>
+
+<script>
+const $=id=>document.getElementById(id);
+let fotoData="", gps=null, avaliacaoAtual=null, deferredPrompt=null;
+
+const baseConhecimento={
+"Fissura / trinca":{
+causas:"Retração, variação térmica, movimentação estrutural, deformação, sobrecarga, recalque, detalhamento ou corrosão. A causa deve ser confirmada pela inspeção e pelo histórico.",
+ensaios:"Mapeamento e medição de abertura, fissurômetro, acompanhamento de evolução, pacometria e, quando aplicável, ultrassom e análise estrutural.",
+conduta:"Registrar orientação, extensão, abertura e evolução. Correlacionar com carregamentos, juntas, apoios, armaduras e movimentações da estrutura."
+},
+"Corrosão aparente":{
+causas:"Carbonatação, ingresso de cloretos, umidade persistente, cobrimento insuficiente ou falha de proteção do concreto.",
+ensaios:"Pacometria, carbonatação, potencial de corrosão, resistividade elétrica e, quando necessário, teor de cloretos.",
+conduta:"Delimitar extensão, avaliar perda de seção e condição do concreto. Definir a terapia somente após confirmar causa e abrangência."
+},
+"Armadura exposta":{
+causas:"Desplacamento por corrosão, impacto, cobrimento insuficiente, falha executiva ou deterioração progressiva.",
+ensaios:"Inspeção da seção remanescente, pacometria, potencial de corrosão, resistividade e avaliação do concreto adjacente.",
+conduta:"Avaliar estabilidade local, extensão e risco. Verificar necessidade de proteção provisória e definir recomposição adequada."
+},
+"Desplacamento do cobrimento":{
+causas:"Corrosão expansiva, perda de aderência, falha de concretagem, impacto ou deterioração por agentes agressivos.",
+ensaios:"Percussão/som cavo, pacometria, carbonatação, potencial de corrosão e inspeção direta da armadura.",
+conduta:"Mapear a área, controlar risco de desprendimento e investigar a causa antes de definir a recuperação."
+},
+"Infiltração / umidade":{
+causas:"Falha de impermeabilização, juntas, drenagem, fissuras, tubulações ou entrada de água pelo entorno.",
+ensaios:"Mapeamento de umidade, inspeção de juntas e drenagem, termografia quando aplicável e teste de estanqueidade conforme o caso.",
+conduta:"Localizar a origem da água antes do reparo superficial e avaliar os efeitos da umidade sobre concreto e armaduras."
+},
+"Eflorescência":{
+causas:"Migração de sais solúveis pela presença de água e caminhos de percolação.",
+ensaios:"Inspeção da origem da água, umidade e, quando necessário, análise dos depósitos e caracterização química.",
+conduta:"Tratar a origem da água e verificar possível lixiviação, fissuração ou deterioração associada."
+},
+"Segregação / ninho de concretagem":{
+causas:"Adensamento insuficiente, lançamento inadequado, alta densidade de armadura, falha de fôrma ou perda de argamassa.",
+ensaios:"Percussão, ultrassom, pacometria e extração de testemunho quando houver dúvida sobre profundidade ou integridade.",
+conduta:"Delimitar profundidade e extensão antes da recomposição e avaliar cobrimento, aderência e exposição de armaduras."
+},
+"Deterioração superficial":{
+causas:"Abrasão, intempéries, ataque químico, ciclos de umedecimento/secagem, baixa qualidade superficial ou manutenção deficiente.",
+ensaios:"Inspeção detalhada, esclerometria quando aplicável, absorção/permeabilidade e ensaios específicos ao agente de deterioração.",
+conduta:"Identificar o mecanismo predominante e a profundidade afetada antes de definir proteção ou recomposição."
+}
+};
+
+document.querySelectorAll(".nav button").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+ btn.classList.add("active"); $(btn.dataset.panel).classList.add("active");
+ if(btn.dataset.panel==="historico") renderHistorico();
+});
+
+$("foto").onchange=e=>{
+ const f=e.target.files?.[0]; if(!f)return;
+ const r=new FileReader(); r.onload=()=>{fotoData=r.result;$("previewImg").src=fotoData;$("preview").classList.remove("hidden")}; r.readAsDataURL(f)
+};
+$("removerFoto").onclick=()=>{fotoData="";$("foto").value="";$("preview").classList.add("hidden")};
+
+$("gpsBtn").onclick=()=>{
+ if(!navigator.geolocation)return alert("Geolocalização não disponível neste navegador.");
+ $("gpsText").textContent="Obtendo localização...";
+ navigator.geolocation.getCurrentPosition(pos=>{
+   gps={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy};
+   $("gpsText").textContent=`Lat ${gps.lat.toFixed(6)} • Lon ${gps.lon.toFixed(6)} • ±${Math.round(gps.acc)} m`;
+ },()=>{$("gpsText").textContent="Não foi possível obter a localização.";},{enableHighAccuracy:true,timeout:10000});
+};
+
+function validar(){
+ for(const id of ["obra","tipo","elemento","patologia","severidade"]){if(!$(id).value){$(id).focus();alert("Preencha os campos obrigatórios.");return false}}
+ return true
+}
+$("avaliar").onclick=()=>{
+ if(!validar())return;
+ const p=$("patologia").value, s=$("severidade").value, k=baseConhecimento[p];
+ let cond=k.conduta;
+ if(s==="Alto")cond+=" Programar investigação complementar e intervenção com prioridade.";
+ if(s==="Crítico")cond+=" Priorizar avaliação técnica imediata e adotar medidas preventivas de segurança quando houver risco.";
+ avaliacaoAtual={patologia:p,severidade:s,causas:k.causas,ensaios:k.ensaios,conduta:cond};
+ $("badgePatologia").textContent=p;$("badgeSeveridade").textContent="Atenção: "+s;$("tituloResultado").textContent="Avaliação preliminar concluída";
+ $("causas").textContent=avaliacaoAtual.causas;$("ensaios").textContent=avaliacaoAtual.ensaios;$("conduta").textContent=avaliacaoAtual.conduta;
+ $("resultado").classList.remove("hidden");$("resultado").scrollIntoView({behavior:"smooth",block:"start"});
+};
+$("ia").onclick=()=>$("iaDialog").showModal();$("fecharIA").onclick=()=>$("iaDialog").close();
+
+function dados(){
+ return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),data:new Date().toISOString(),
+ obra:$("obra").value,codigo:$("codigo").value,tipo:$("tipo").value,elemento:$("elemento").value,ambiente:$("ambiente").value,
+ local:$("local").value,gps,patologia:$("patologia").value,severidade:$("severidade").value,abertura:$("abertura").value,area:$("area").value,
+ obs:$("obs").value,fotoData,avaliacao:avaliacaoAtual}
+}
+function hist(){try{return JSON.parse(localStorage.getItem("l_eng_patologia")||"[]")}catch{return[]}}
+function setHist(v){localStorage.setItem("l_eng_patologia",JSON.stringify(v));atualizaStats()}
+$("salvar").onclick=()=>{
+ if(!avaliacaoAtual)return alert("Faça a avaliação antes de salvar.");
+ const h=hist();h.unshift(dados());setHist(h);alert("Inspeção salva neste dispositivo.");
+};
+
+function relatorioHTML(d){
+ const gpsTxt=d.gps?`${d.gps.lat.toFixed(6)}, ${d.gps.lon.toFixed(6)} (±${Math.round(d.gps.acc)} m)`:"-";
+ return `
+ ${d.fotoData?`<img class="report-photo" src="${d.fotoData}">`:""}
+ <table class="report-table">
+ <tr><td>Data</td><td>${new Date(d.data).toLocaleString("pt-BR")}</td></tr>
+ <tr><td>Obra / estrutura</td><td>${d.obra||"-"}</td></tr>
+ <tr><td>Referência</td><td>${d.codigo||"-"}</td></tr>
+ <tr><td>Tipo</td><td>${d.tipo||"-"}</td></tr>
+ <tr><td>Elemento</td><td>${d.elemento||"-"}</td></tr>
+ <tr><td>Ambiente</td><td>${d.ambiente||"-"}</td></tr>
+ <tr><td>Localização</td><td>${d.local||"-"}</td></tr>
+ <tr><td>GPS</td><td>${gpsTxt}</td></tr>
+ <tr><td>Manifestação</td><td>${d.patologia||"-"}</td></tr>
+ <tr><td>Nível de atenção</td><td>${d.severidade||"-"}</td></tr>
+ <tr><td>Abertura</td><td>${d.abertura?d.abertura+" mm":"-"}</td></tr>
+ <tr><td>Área afetada</td><td>${d.area?d.area+" m²":"-"}</td></tr>
+ </table>
+ <div class="report-box"><b>Possíveis causas</b><p>${d.avaliacao?.causas||"-"}</p></div>
+ <div class="report-box"><b>Ensaios recomendados</b><p>${d.avaliacao?.ensaios||"-"}</p></div>
+ <div class="report-box"><b>Conduta sugerida</b><p>${d.avaliacao?.conduta||"-"}</p></div>
+ <div class="report-box"><b>Observações</b><p>${d.obs||"-"}</p></div>`
+}
+function abrirRelatorio(d){$("dataRelatorio").textContent=new Date(d.data).toLocaleDateString("pt-BR");$("corpoRelatorio").innerHTML=relatorioHTML(d);$("reportDialog").showModal()}
+$("relatorio").onclick=()=>{if(!avaliacaoAtual)return alert("Faça a avaliação primeiro.");abrirRelatorio(dados())};
+$("imprimir").onclick=()=>window.print();$("fecharRelatorio").onclick=()=>$("reportDialog").close();
+
+function renderHistorico(){
+ const h=hist(), box=$("listaHistorico");
+ if(!h.length){box.innerHTML='<div class="empty">Nenhuma inspeção salva.</div>';return}
+ box.innerHTML=h.map((d,i)=>`<div class="history-item">
+ ${d.fotoData?`<img src="${d.fotoData}">`:`<div style="width:84px;height:70px;background:#eef2f5;border-radius:10px;display:grid;place-items:center">📷</div>`}
+ <div><h4>${d.obra}</h4><p>${d.elemento} • ${d.patologia}</p><p>${new Date(d.data).toLocaleString("pt-BR")} • ${d.severidade}</p></div>
+ <div class="actions"><button class="ghost" data-r="${i}">Relatório</button><button class="ghost" data-x="${i}">Excluir</button></div></div>`).join("");
+ box.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>abrirRelatorio(h[+b.dataset.r]));
+ box.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{if(confirm("Excluir esta inspeção?")){h.splice(+b.dataset.x,1);setHist(h);renderHistorico()}})
+}
+$("exportar").onclick=()=>{
+ const blob=new Blob([JSON.stringify(hist(),null,2)],{type:"application/json"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download="inspecoes-l-engenharia.json";a.click();URL.revokeObjectURL(a.href)
+};
+function atualizaStats(){const h=hist();$("countTotal").textContent=h.length;$("countHigh").textContent=h.filter(x=>["Alto","Crítico"].includes(x.severidade)).length}
+atualizaStats();
+
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden")});
+$("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
+if("serviceWorker" in navigator && location.protocol!=="file:")navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
