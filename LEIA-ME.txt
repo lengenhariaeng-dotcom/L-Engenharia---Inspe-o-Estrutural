@@ -1,23 +1,20 @@
-L ENGENHARIA - PATOLOGIA ESTRUTURAL
+L ENGENHARIA - INSPEÇÃO ESTRUTURAL v3
 
-1) Para testar agora:
-   Abra o arquivo index.html no navegador.
+ATUALIZAÇÕES
+- Seleção inicial de segmento:
+  1) Infraestrutura: Ponte, Viaduto ou Túnel
+  2) Edificação: Edifício ou Casa
+- Lista de elementos muda automaticamente conforme o tipo escolhido.
+- Relatório de impressão/PDF refeito para A4 retrato.
+- A impressão não usa mais o diálogo do aplicativo, evitando corte, sobreposição e desconfiguração.
+- Histórico antigo continua sendo lido pelo mesmo armazenamento local.
+- Cache do PWA atualizado para carregar a versão nova.
 
-2) Para instalar no celular como aplicativo:
-   Hospede esta pasta em HTTPS (GitHub Pages, Firebase Hosting, Netlify etc.).
-   Depois abra o endereço no celular e use 'Adicionar à tela inicial' ou 'Instalar'.
+PARA ATUALIZAR NO GITHUB
+Substitua:
+- index.html
+- sw.js
+- manifest.json
+Os ícones podem permanecer, mas estão incluídos no pacote completo.
 
-3) O que funciona:
-   - Foto pela câmera/galeria
-   - GPS
-   - Cadastro da estrutura/elemento
-   - Avaliação preliminar assistida
-   - Recomendações de ensaios
-   - Histórico local
-   - Exportação JSON
-   - Relatório imprimível / salvável em PDF
-   - PWA instalável
-
-4) IA pela fotografia:
-   A interface está preparada, mas a identificação automática real da patologia pela imagem
-   precisa de integração com um serviço de IA visual por backend seguro.
+Depois faça Commit changes e aguarde o github-pages ficar verde com horário recente.

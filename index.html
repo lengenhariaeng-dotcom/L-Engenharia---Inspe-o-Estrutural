@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0B2540">
-<title>L Engenharia | Patologia Estrutural</title>
+<title>L Engenharia | Inspeção Estrutural</title>
 <link rel="manifest" href="manifest.json">
 <style>
 :root{
@@ -36,7 +36,7 @@ main{max-width:1120px;margin:auto;padding:18px 14px 70px}
 .hero p{color:#D9E2EA;max-width:760px;line-height:1.5}
 .kicker{font-size:12px;letter-spacing:.17em;color:var(--gold);font-weight:900}
 .hero-card{align-self:stretch;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
-.hero-card strong{font-size:34px}.hero-card span{color:#D9E2EA}
+.hero-card strong{font-size:28px}.hero-card span{color:#D9E2EA}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
 .stat{background:white;border-radius:16px;padding:16px;box-shadow:0 8px 25px rgba(11,37,64,.06)}
 .stat b{display:block;color:var(--navy);font-size:26px}.stat span{font-size:12px;color:var(--muted)}
@@ -54,6 +54,14 @@ label{display:flex;flex-direction:column;gap:7px;font-weight:800;color:var(--nav
 input,select,textarea{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:white;color:var(--text);outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,99,.15)}
 textarea{min-height:90px;resize:vertical}
+.segment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.segment-btn{border:2px solid var(--line);background:#fff;border-radius:18px;padding:18px;text-align:left;color:var(--text);transition:.15s}
+.segment-btn:hover{border-color:#B4C2CF}
+.segment-btn.active{border-color:var(--navy);box-shadow:0 0 0 3px rgba(11,37,64,.10);background:#F7FAFC}
+.segment-icon{font-size:29px;display:block;margin-bottom:7px}
+.segment-btn strong{display:block;color:var(--navy);font-size:17px;margin-bottom:4px}
+.segment-btn span{display:block;color:var(--muted);font-size:13px;line-height:1.4}
+.selection-note{margin-top:10px;border-radius:12px;padding:10px 12px;background:#F7F9FB;color:var(--muted);font-size:12px}
 .photo-zone{border:1.5px dashed #B9C4CE;border-radius:18px;background:#FAFBFC;padding:14px;text-align:center}
 .photo-zone input{display:none}.photo-btn{display:inline-flex;padding:12px 16px;border-radius:12px;background:var(--navy);color:white;font-weight:900;cursor:pointer}
 .preview{margin-top:14px}.preview img{max-width:100%;max-height:480px;object-fit:contain;border-radius:14px;background:#101820}
@@ -73,7 +81,7 @@ textarea{min-height:90px;resize:vertical}
 .library{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .lib-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#FBFCFD}
 .lib-card h4{margin:0 0 7px;color:var(--navy)}.lib-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
-dialog{border:0;border-radius:20px;padding:0;max-width:min(800px,94vw);box-shadow:0 30px 80px rgba(0,0,0,.25)}
+dialog{border:0;border-radius:20px;padding:0;max-width:min(850px,94vw);box-shadow:0 30px 80px rgba(0,0,0,.25)}
 dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 .modal{padding:22px;background:white}.modal h3{color:var(--navy);margin-top:0}
 .report-header{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid var(--navy);padding-bottom:10px}
@@ -83,16 +91,34 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 .small{font-size:12px;color:var(--muted)}
 .footer{margin-top:20px;text-align:center;color:var(--muted);font-size:12px}
 .hidden{display:none!important}
+#printArea{display:none}
+
 @media(max-width:800px){
  .hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
- .grid.two,.grid.three,.result-grid,.library{grid-template-columns:1fr}
+ .grid.two,.grid.three,.result-grid,.library,.segment-grid{grid-template-columns:1fr}
  .history-item{grid-template-columns:64px 1fr}.history-item img{width:64px;height:64px}.history-item .actions{grid-column:1/-1}
 }
+
 @media print{
- body *{visibility:hidden!important}
- #reportDialog,#reportDialog *{visibility:visible!important}
- #reportDialog{position:absolute;inset:0;width:100%;max-width:none;box-shadow:none}
- .no-print{display:none!important}
+ @page{size:A4 portrait;margin:12mm}
+ html,body{background:#fff!important;width:auto!important;height:auto!important;overflow:visible!important}
+ body>*:not(#printArea){display:none!important}
+ #printArea{display:block!important;position:static!important;width:auto!important;margin:0!important;padding:0!important;color:#111!important;background:#fff!important;font-family:Arial,Helvetica,sans-serif!important}
+ .p-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0B2540;padding-bottom:8px;margin-bottom:10px}
+ .p-brand{font-size:19px;font-weight:800;color:#0B2540}
+ .p-sub{font-size:11px;color:#5D6875;margin-top:2px}
+ .p-date{font-size:10px;text-align:right}
+ .p-title{font-size:17px;margin:8px 0 5px;color:#0B2540}
+ .p-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#6D7886;margin-bottom:8px}
+ .p-photo{display:block;max-width:100%;max-height:82mm;object-fit:contain;margin:8px auto 12px;border:1px solid #ddd}
+ .p-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:10px}
+ .p-table td{border:1px solid #C7CDD3;padding:5px;vertical-align:top}
+ .p-table td:first-child{width:34%;font-weight:700;color:#0B2540;background:#F5F7F9}
+ .p-section{border:1px solid #D8DDE2;border-radius:0;padding:7px 8px;margin:0 0 7px;break-inside:avoid}
+ .p-section b{display:block;color:#0B2540;font-size:10px;margin-bottom:3px}
+ .p-section p{margin:0;font-size:10px;line-height:1.38}
+ .p-notice{font-size:8.5px;color:#555;border-top:1px solid #C7CDD3;margin-top:10px;padding-top:6px}
+ .p-page-break{break-before:page}
 }
 </style>
 </head>
@@ -100,7 +126,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 <header>
   <div class="brand">
     <div class="logo">L</div>
-    <div><strong>L Engenharia</strong><small>Patologia Estrutural</small></div>
+    <div><strong>L Engenharia</strong><small>Inspeção Estrutural</small></div>
   </div>
   <div class="header-actions">
     <button id="installBtn" class="ghost hidden">Instalar</button>
@@ -111,20 +137,20 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
   <section class="hero">
     <div>
       <div class="kicker">INSPEÇÃO • REGISTRO • DIAGNÓSTICO PRELIMINAR</div>
-      <h1>Patologia estrutural na palma da mão.</h1>
-      <p>Registre a ocorrência, fotografe, classifique a manifestação, receba recomendações técnicas e gere um relatório preliminar em poucos passos.</p>
+      <h1>Inspeção estrutural para infraestrutura e edificações.</h1>
+      <p>Registre a estrutura, fotografe a ocorrência, classifique a manifestação, receba recomendações técnicas e gere um relatório preliminar em formato A4.</p>
     </div>
     <div class="hero-card">
-      <span>Fluxo rápido de campo</span>
-      <strong>Foto → avaliação → relatório</strong>
+      <span>Do campo ao relatório</span>
+      <strong>Infraestrutura<br>ou edificação</strong>
     </div>
   </section>
 
   <section class="stats">
     <div class="stat"><b id="countTotal">0</b><span>inspeções salvas</span></div>
     <div class="stat"><b id="countHigh">0</b><span>nível alto/crítico</span></div>
-    <div class="stat"><b>8</b><span>manifestações cadastradas</span></div>
-    <div class="stat"><b>PDF</b><span>relatório pelo navegador</span></div>
+    <div class="stat"><b>2</b><span>segmentos de inspeção</span></div>
+    <div class="stat"><b>A4</b><span>relatório configurado</span></div>
   </section>
 
   <nav class="nav">
@@ -136,20 +162,38 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 
   <section id="nova" class="panel active">
     <div class="card">
-      <div class="section-title"><span class="step">01</span><div><h3>Identificação</h3><p>Cadastre a estrutura e o ponto inspecionado.</p></div></div>
+      <div class="section-title"><span class="step">01</span><div><h3>Segmento da inspeção</h3><p>Escolha primeiro o grupo da estrutura.</p></div></div>
+      <div class="segment-grid">
+        <button type="button" class="segment-btn" data-segmento="Infraestrutura">
+          <span class="segment-icon">🌉</span>
+          <strong>Infraestrutura</strong>
+          <span>Pontes, viadutos e túneis.</span>
+        </button>
+        <button type="button" class="segment-btn" data-segmento="Edificação">
+          <span class="segment-icon">🏢</span>
+          <strong>Edificação</strong>
+          <span>Edifícios e casas.</span>
+        </button>
+      </div>
+      <input type="hidden" id="segmento">
+      <div id="segmentoNota" class="selection-note">Nenhum segmento selecionado.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="step">02</span><div><h3>Identificação</h3><p>Cadastre a estrutura e o ponto inspecionado.</p></div></div>
       <div class="grid two">
-        <label>Obra / estrutura<input id="obra" placeholder="Ex.: OAE 109, Edifício..." required></label>
-        <label>Código / referência<input id="codigo" placeholder="Ex.: Apoio 15 / eixo 3"></label>
+        <label>Obra / estrutura<input id="obra" placeholder="Ex.: OAE 109, Edifício residencial..." required></label>
+        <label>Código / referência<input id="codigo" placeholder="Ex.: Apoio 15 / pavimento 3"></label>
         <label>Tipo de estrutura
-          <select id="tipo"><option value="">Selecione</option><option>Ponte / viaduto</option><option>Túnel</option><option>Edificação</option><option>Contenção</option><option>Fundação</option><option>Outro</option></select>
+          <select id="tipo"><option value="">Selecione primeiro o segmento</option></select>
         </label>
         <label>Elemento
-          <select id="elemento"><option value="">Selecione</option><option>Viga</option><option>Pilar</option><option>Laje</option><option>Bloco / fundação</option><option>Travessa</option><option>Encontro</option><option>Parede / túnel</option><option>Aparelho de apoio</option><option>Outro</option></select>
+          <select id="elemento"><option value="">Selecione o tipo de estrutura</option></select>
         </label>
         <label>Ambiente
           <select id="ambiente"><option>Externo</option><option>Interno</option><option>Industrial</option><option>Marinho / agressivo</option><option>Subterrâneo</option><option>Úmido / infiltração</option></select>
         </label>
-        <label>Localização / trecho<input id="local" placeholder="Ex.: face norte, km, eixo..."></label>
+        <label>Localização / trecho<input id="local" placeholder="Ex.: face norte, km, eixo, pavimento..."></label>
       </div>
       <div class="actions">
         <button type="button" id="gpsBtn" class="ghost">📍 Capturar GPS</button>
@@ -158,7 +202,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
     </div>
 
     <div class="card">
-      <div class="section-title"><span class="step">02</span><div><h3>Foto da ocorrência</h3><p>Use a câmera traseira do celular ou selecione uma imagem.</p></div></div>
+      <div class="section-title"><span class="step">03</span><div><h3>Foto da ocorrência</h3><p>Use a câmera traseira do celular ou selecione uma imagem.</p></div></div>
       <div class="photo-zone">
         <input id="foto" type="file" accept="image/*" capture="environment">
         <label class="photo-btn" for="foto">📷 Tirar / selecionar foto</label>
@@ -170,7 +214,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
     </div>
 
     <div class="card">
-      <div class="section-title"><span class="step">03</span><div><h3>Avaliação preliminar</h3><p>Confirme a manifestação observada em campo.</p></div></div>
+      <div class="section-title"><span class="step">04</span><div><h3>Avaliação preliminar</h3><p>Confirme a manifestação observada em campo.</p></div></div>
       <div class="grid two">
         <label>Manifestação
           <select id="patologia"><option value="">Selecione</option><option>Fissura / trinca</option><option>Corrosão aparente</option><option>Armadura exposta</option><option>Desplacamento do cobrimento</option><option>Infiltração / umidade</option><option>Eflorescência</option><option>Segregação / ninho de concretagem</option><option>Deterioração superficial</option></select>
@@ -197,7 +241,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
         <div class="notice">A avaliação é preliminar e deve ser validada por profissional habilitado. Quando necessário, complemente com inspeção detalhada, ensaios, projetos e histórico da estrutura.</div>
         <div class="actions">
           <button type="button" id="salvar" class="primary">Salvar inspeção</button>
-          <button type="button" id="relatorio" class="ghost">Gerar relatório</button>
+          <button type="button" id="relatorio" class="ghost">Visualizar relatório</button>
         </div>
       </div>
     </div>
@@ -229,19 +273,19 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 
   <section id="sobre" class="panel">
     <div class="card">
-      <h2>L Engenharia — Patologia Estrutural</h2>
-      <p>Aplicativo de apoio a inspeções de campo em estruturas de concreto armado.</p>
-      <p class="small">Esta versão funciona sem conta e sem banco de dados em nuvem. A análise automática real da fotografia por IA exige conexão com um serviço externo por meio de um backend seguro.</p>
+      <h2>L Engenharia — Inspeção Estrutural</h2>
+      <p>Aplicativo de apoio a inspeções de campo em infraestrutura e edificações.</p>
+      <p class="small">Os relatórios são formatados para impressão em A4 e podem ser salvos como PDF pelo próprio navegador.</p>
     </div>
   </section>
 
-  <div class="footer">L Engenharia • inspeção e diagnóstico preliminar • versão MVP</div>
+  <div class="footer">L Engenharia • inspeção e diagnóstico preliminar • versão 3</div>
 </main>
 
 <dialog id="iaDialog">
   <div class="modal">
     <h3>Análise automática por foto</h3>
-    <p>O aplicativo já possui o fluxo e o botão de análise, mas esta versão <strong>não simula um diagnóstico automático</strong>. Para reconhecer fissura, corrosão, desplacamento e outras manifestações diretamente pela foto, é necessário conectar um serviço de IA visual.</p>
+    <p>O aplicativo mantém o fluxo de análise da fotografia, porém a identificação automática real das manifestações exige integração com um serviço de IA visual.</p>
     <p>Enquanto isso, a foto fica vinculada à inspeção e o engenheiro confirma a manifestação observada.</p>
     <div class="actions"><button id="fecharIA" class="primary">Entendi</button></div>
   </div>
@@ -249,16 +293,30 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 
 <dialog id="reportDialog">
   <div class="modal" id="reportContent">
-    <div class="report-header"><div><h2 style="margin:0;color:var(--navy)">L Engenharia</h2><div class="small">Relatório preliminar de inspeção</div></div><div id="dataRelatorio" class="small"></div></div>
+    <div class="report-header"><div><h2 style="margin:0;color:var(--navy)">L Engenharia</h2><div class="small">Relatório preliminar de inspeção estrutural</div></div><div id="dataRelatorio" class="small"></div></div>
     <div id="corpoRelatorio"></div>
     <div class="notice">Documento preliminar. Validar por profissional habilitado antes de uso técnico definitivo.</div>
     <div class="actions no-print"><button id="imprimir" class="primary">Imprimir / Salvar PDF</button><button id="fecharRelatorio" class="ghost">Fechar</button></div>
   </div>
 </dialog>
 
+<div id="printArea"></div>
+
 <script>
 const $=id=>document.getElementById(id);
-let fotoData="", gps=null, avaliacaoAtual=null, deferredPrompt=null;
+let fotoData="", gps=null, avaliacaoAtual=null, deferredPrompt=null, relatorioAtual=null;
+
+const tiposPorSegmento={
+ "Infraestrutura":["Ponte","Viaduto","Túnel"],
+ "Edificação":["Edifício","Casa"]
+};
+const elementosPorTipo={
+ "Ponte":["Tabuleiro / laje","Viga / longarina","Travessa","Pilar","Bloco / fundação","Encontro","Aparelho de apoio","Junta de dilatação","Barreira / guarda-rodas","Drenagem","Outro"],
+ "Viaduto":["Tabuleiro / laje","Viga / longarina","Travessa","Pilar","Bloco / fundação","Encontro","Aparelho de apoio","Junta de dilatação","Barreira / guarda-rodas","Drenagem","Outro"],
+ "Túnel":["Revestimento / parede","Abóbada","Hastial","Invert / piso","Emboque","Junta","Drenagem / barbacã","Pavimento","Outro"],
+ "Edifício":["Laje","Viga","Pilar","Parede estrutural","Alvenaria","Fundação","Escada","Sacada","Fachada","Cobertura","Reservatório","Outro"],
+ "Casa":["Laje","Viga","Pilar","Parede estrutural","Alvenaria","Fundação","Escada","Sacada / varanda","Fachada","Cobertura","Muro","Outro"]
+};
 
 const baseConhecimento={
 "Fissura / trinca":{
@@ -303,12 +361,40 @@ conduta:"Identificar o mecanismo predominante e a profundidade afetada antes de 
 }
 };
 
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function inferSegmento(d){
+ if(d.segmento)return d.segmento;
+ if(["Ponte","Viaduto","Ponte / viaduto","Túnel"].includes(d.tipo))return "Infraestrutura";
+ if(["Edifício","Edificação","Casa"].includes(d.tipo))return "Edificação";
+ return "Não informado";
+}
+
 document.querySelectorAll(".nav button").forEach(btn=>btn.onclick=()=>{
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
  btn.classList.add("active"); $(btn.dataset.panel).classList.add("active");
  if(btn.dataset.panel==="historico") renderHistorico();
 });
+
+document.querySelectorAll(".segment-btn").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".segment-btn").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ $("segmento").value=btn.dataset.segmento;
+ $("segmentoNota").textContent=btn.dataset.segmento==="Infraestrutura"
+  ?"Infraestrutura selecionada: escolha Ponte, Viaduto ou Túnel."
+  :"Edificação selecionada: escolha Edifício ou Casa.";
+ popularTipos(btn.dataset.segmento);
+});
+
+function popularTipos(segmento){
+ const sel=$("tipo");
+ sel.innerHTML='<option value="">Selecione</option>'+tiposPorSegmento[segmento].map(v=>`<option>${v}</option>`).join("");
+ $("elemento").innerHTML='<option value="">Selecione o tipo de estrutura</option>';
+}
+$("tipo").onchange=()=>{
+ const tipo=$("tipo").value, els=elementosPorTipo[tipo]||[];
+ $("elemento").innerHTML='<option value="">Selecione</option>'+els.map(v=>`<option>${v}</option>`).join("");
+};
 
 $("foto").onchange=e=>{
  const f=e.target.files?.[0]; if(!f)return;
@@ -326,7 +412,9 @@ $("gpsBtn").onclick=()=>{
 };
 
 function validar(){
- for(const id of ["obra","tipo","elemento","patologia","severidade"]){if(!$(id).value){$(id).focus();alert("Preencha os campos obrigatórios.");return false}}
+ for(const id of ["segmento","obra","tipo","elemento","patologia","severidade"]){
+   if(!$(id).value){if($(id).focus)$(id).focus();alert(id==="segmento"?"Escolha Infraestrutura ou Edificação.":"Preencha os campos obrigatórios.");return false}
+ }
  return true
 }
 $("avaliar").onclick=()=>{
@@ -344,7 +432,7 @@ $("ia").onclick=()=>$("iaDialog").showModal();$("fecharIA").onclick=()=>$("iaDia
 
 function dados(){
  return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),data:new Date().toISOString(),
- obra:$("obra").value,codigo:$("codigo").value,tipo:$("tipo").value,elemento:$("elemento").value,ambiente:$("ambiente").value,
+ segmento:$("segmento").value,obra:$("obra").value,codigo:$("codigo").value,tipo:$("tipo").value,elemento:$("elemento").value,ambiente:$("ambiente").value,
  local:$("local").value,gps,patologia:$("patologia").value,severidade:$("severidade").value,abertura:$("abertura").value,area:$("area").value,
  obs:$("obs").value,fotoData,avaliacao:avaliacaoAtual}
 }
@@ -357,48 +445,105 @@ $("salvar").onclick=()=>{
 
 function relatorioHTML(d){
  const gpsTxt=d.gps?`${d.gps.lat.toFixed(6)}, ${d.gps.lon.toFixed(6)} (±${Math.round(d.gps.acc)} m)`:"-";
+ const segmento=inferSegmento(d);
  return `
  ${d.fotoData?`<img class="report-photo" src="${d.fotoData}">`:""}
  <table class="report-table">
  <tr><td>Data</td><td>${new Date(d.data).toLocaleString("pt-BR")}</td></tr>
- <tr><td>Obra / estrutura</td><td>${d.obra||"-"}</td></tr>
- <tr><td>Referência</td><td>${d.codigo||"-"}</td></tr>
- <tr><td>Tipo</td><td>${d.tipo||"-"}</td></tr>
- <tr><td>Elemento</td><td>${d.elemento||"-"}</td></tr>
- <tr><td>Ambiente</td><td>${d.ambiente||"-"}</td></tr>
- <tr><td>Localização</td><td>${d.local||"-"}</td></tr>
+ <tr><td>Segmento</td><td>${esc(segmento)}</td></tr>
+ <tr><td>Obra / estrutura</td><td>${esc(d.obra||"-")}</td></tr>
+ <tr><td>Referência</td><td>${esc(d.codigo||"-")}</td></tr>
+ <tr><td>Tipo</td><td>${esc(d.tipo||"-")}</td></tr>
+ <tr><td>Elemento</td><td>${esc(d.elemento||"-")}</td></tr>
+ <tr><td>Ambiente</td><td>${esc(d.ambiente||"-")}</td></tr>
+ <tr><td>Localização</td><td>${esc(d.local||"-")}</td></tr>
  <tr><td>GPS</td><td>${gpsTxt}</td></tr>
- <tr><td>Manifestação</td><td>${d.patologia||"-"}</td></tr>
- <tr><td>Nível de atenção</td><td>${d.severidade||"-"}</td></tr>
- <tr><td>Abertura</td><td>${d.abertura?d.abertura+" mm":"-"}</td></tr>
- <tr><td>Área afetada</td><td>${d.area?d.area+" m²":"-"}</td></tr>
+ <tr><td>Manifestação</td><td>${esc(d.patologia||"-")}</td></tr>
+ <tr><td>Nível de atenção</td><td>${esc(d.severidade||"-")}</td></tr>
+ <tr><td>Abertura</td><td>${d.abertura?esc(d.abertura)+" mm":"-"}</td></tr>
+ <tr><td>Área afetada</td><td>${d.area?esc(d.area)+" m²":"-"}</td></tr>
  </table>
- <div class="report-box"><b>Possíveis causas</b><p>${d.avaliacao?.causas||"-"}</p></div>
- <div class="report-box"><b>Ensaios recomendados</b><p>${d.avaliacao?.ensaios||"-"}</p></div>
- <div class="report-box"><b>Conduta sugerida</b><p>${d.avaliacao?.conduta||"-"}</p></div>
- <div class="report-box"><b>Observações</b><p>${d.obs||"-"}</p></div>`
+ <div class="report-box"><b>Possíveis causas</b><p>${esc(d.avaliacao?.causas||"-")}</p></div>
+ <div class="report-box"><b>Ensaios recomendados</b><p>${esc(d.avaliacao?.ensaios||"-")}</p></div>
+ <div class="report-box"><b>Conduta sugerida</b><p>${esc(d.avaliacao?.conduta||"-")}</p></div>
+ <div class="report-box"><b>Observações</b><p>${esc(d.obs||"-")}</p></div>`
 }
-function abrirRelatorio(d){$("dataRelatorio").textContent=new Date(d.data).toLocaleDateString("pt-BR");$("corpoRelatorio").innerHTML=relatorioHTML(d);$("reportDialog").showModal()}
+
+function printHTML(d){
+ const gpsTxt=d.gps?`${d.gps.lat.toFixed(6)}, ${d.gps.lon.toFixed(6)} (±${Math.round(d.gps.acc)} m)`:"-";
+ const segmento=inferSegmento(d);
+ return `
+ <div class="p-head">
+   <div><div class="p-brand">L Engenharia</div><div class="p-sub">Relatório preliminar de inspeção estrutural</div></div>
+   <div class="p-date">${new Date(d.data).toLocaleString("pt-BR")}</div>
+ </div>
+ <div class="p-title">${esc(d.obra||"Inspeção estrutural")}</div>
+ <div class="p-kicker">${esc(segmento)} • ${esc(d.tipo||"-")} • ${esc(d.elemento||"-")}</div>
+ ${d.fotoData?`<img class="p-photo" src="${d.fotoData}">`:""}
+ <table class="p-table">
+   <tr><td>Segmento</td><td>${esc(segmento)}</td></tr>
+   <tr><td>Obra / estrutura</td><td>${esc(d.obra||"-")}</td></tr>
+   <tr><td>Código / referência</td><td>${esc(d.codigo||"-")}</td></tr>
+   <tr><td>Tipo de estrutura</td><td>${esc(d.tipo||"-")}</td></tr>
+   <tr><td>Elemento</td><td>${esc(d.elemento||"-")}</td></tr>
+   <tr><td>Ambiente</td><td>${esc(d.ambiente||"-")}</td></tr>
+   <tr><td>Localização / trecho</td><td>${esc(d.local||"-")}</td></tr>
+   <tr><td>GPS</td><td>${gpsTxt}</td></tr>
+   <tr><td>Manifestação</td><td>${esc(d.patologia||"-")}</td></tr>
+   <tr><td>Nível de atenção visual</td><td>${esc(d.severidade||"-")}</td></tr>
+   <tr><td>Abertura de fissura</td><td>${d.abertura?esc(d.abertura)+" mm":"-"}</td></tr>
+   <tr><td>Área afetada</td><td>${d.area?esc(d.area)+" m²":"-"}</td></tr>
+ </table>
+ <div class="p-section"><b>Possíveis causas</b><p>${esc(d.avaliacao?.causas||"-")}</p></div>
+ <div class="p-section"><b>Ensaios recomendados</b><p>${esc(d.avaliacao?.ensaios||"-")}</p></div>
+ <div class="p-section"><b>Conduta sugerida</b><p>${esc(d.avaliacao?.conduta||"-")}</p></div>
+ <div class="p-section"><b>Observações</b><p>${esc(d.obs||"-")}</p></div>
+ <div class="p-notice">Documento preliminar de apoio à inspeção. Validar por profissional habilitado antes de uso técnico definitivo.</div>`;
+}
+
+function abrirRelatorio(d){
+ relatorioAtual=d;
+ $("dataRelatorio").textContent=new Date(d.data).toLocaleDateString("pt-BR");
+ $("corpoRelatorio").innerHTML=relatorioHTML(d);
+ $("reportDialog").showModal()
+}
+function imprimirRelatorio(d){
+ if(!d)return;
+ $("printArea").innerHTML=printHTML(d);
+ const imgs=[...$("printArea").querySelectorAll("img")];
+ const go=()=>setTimeout(()=>window.print(),70);
+ if(!imgs.length)return go();
+ let pending=imgs.filter(i=>!i.complete).length;
+ if(!pending)return go();
+ imgs.forEach(i=>{
+   if(i.complete)return;
+   const done=()=>{pending--;if(pending<=0)go()};
+   i.addEventListener("load",done,{once:true});
+   i.addEventListener("error",done,{once:true});
+ });
+}
 $("relatorio").onclick=()=>{if(!avaliacaoAtual)return alert("Faça a avaliação primeiro.");abrirRelatorio(dados())};
-$("imprimir").onclick=()=>window.print();$("fecharRelatorio").onclick=()=>$("reportDialog").close();
+$("imprimir").onclick=()=>imprimirRelatorio(relatorioAtual);
+$("fecharRelatorio").onclick=()=>$("reportDialog").close();
 
 function renderHistorico(){
  const h=hist(), box=$("listaHistorico");
  if(!h.length){box.innerHTML='<div class="empty">Nenhuma inspeção salva.</div>';return}
  box.innerHTML=h.map((d,i)=>`<div class="history-item">
  ${d.fotoData?`<img src="${d.fotoData}">`:`<div style="width:84px;height:70px;background:#eef2f5;border-radius:10px;display:grid;place-items:center">📷</div>`}
- <div><h4>${d.obra}</h4><p>${d.elemento} • ${d.patologia}</p><p>${new Date(d.data).toLocaleString("pt-BR")} • ${d.severidade}</p></div>
+ <div><h4>${esc(d.obra)}</h4><p>${esc(inferSegmento(d))} • ${esc(d.tipo||"-")} • ${esc(d.elemento||"-")}</p><p>${new Date(d.data).toLocaleString("pt-BR")} • ${esc(d.severidade)}</p></div>
  <div class="actions"><button class="ghost" data-r="${i}">Relatório</button><button class="ghost" data-x="${i}">Excluir</button></div></div>`).join("");
  box.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>abrirRelatorio(h[+b.dataset.r]));
  box.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{if(confirm("Excluir esta inspeção?")){h.splice(+b.dataset.x,1);setHist(h);renderHistorico()}})
 }
 $("exportar").onclick=()=>{
  const blob=new Blob([JSON.stringify(hist(),null,2)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="inspecoes-l-engenharia.json";a.click();URL.revokeObjectURL(a.href)
+ a.href=URL.createObjectURL(blob);a.download="inspecoes-estruturais-l-engenharia.json";a.click();URL.revokeObjectURL(a.href)
 };
 function atualizaStats(){const h=hist();$("countTotal").textContent=h.length;$("countHigh").textContent=h.filter(x=>["Alto","Crítico"].includes(x.severidade)).length}
 atualizaStats();
 
+window.addEventListener("afterprint",()=>{$("printArea").innerHTML=""});
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden")});
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
 if("serviceWorker" in navigator && location.protocol!=="file:")navigator.serviceWorker.register("sw.js");
