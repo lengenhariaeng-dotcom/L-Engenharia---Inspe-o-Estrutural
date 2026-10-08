@@ -228,7 +228,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
       <label style="margin-top:12px">Observações<textarea id="obs" placeholder="Descreva umidade, som cavo, evolução, exposição de armadura, origem aparente..."></textarea></label>
       <div class="actions">
         <button type="button" id="avaliar" class="primary">Avaliar ocorrência</button>
-        <button type="button" id="ia" class="gold">Análise por IA da foto</button>
+        <button type="button" id="chatgptBtn" class="gold">🤖 Analisar no ChatGPT</button>
       </div>
       <div id="resultado" class="result hidden">
         <div class="badges"><span id="badgePatologia" class="badge"></span><span id="badgeSeveridade" class="badge"></span></div>
@@ -239,6 +239,14 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
           <div class="result-box"><b>Conduta sugerida</b><p id="conduta"></p></div>
         </div>
         <div class="notice">A avaliação é preliminar e deve ser validada por profissional habilitado. Quando necessário, complemente com inspeção detalhada, ensaios, projetos e histórico da estrutura.</div>
+        <div style="margin-top:14px">
+          <label>Análise complementar do ChatGPT <span class="small">(opcional)</span>
+            <textarea id="chatgptResposta" placeholder="Depois da análise no ChatGPT, cole aqui a resposta para ela ficar salva e aparecer no relatório."></textarea>
+          </label>
+          <div class="actions">
+            <button type="button" id="colarChatGPT" class="ghost">📋 Colar resposta</button>
+          </div>
+        </div>
         <div class="actions">
           <button type="button" id="salvar" class="primary">Salvar inspeção</button>
           <button type="button" id="relatorio" class="ghost">Visualizar relatório</button>
@@ -279,15 +287,27 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
     </div>
   </section>
 
-  <div class="footer">L Engenharia • inspeção e diagnóstico preliminar • versão 3</div>
+  <div class="footer">L Engenharia • inspeção e diagnóstico preliminar • versão 4</div>
 </main>
 
-<dialog id="iaDialog">
+<dialog id="chatgptDialog">
   <div class="modal">
-    <h3>Análise automática por foto</h3>
-    <p>O aplicativo mantém o fluxo de análise da fotografia, porém a identificação automática real das manifestações exige integração com um serviço de IA visual.</p>
-    <p>Enquanto isso, a foto fica vinculada à inspeção e o engenheiro confirma a manifestação observada.</p>
-    <div class="actions"><button id="fecharIA" class="primary">Entendi</button></div>
+    <h3>Analisar a anomalia no ChatGPT</h3>
+    <p>O aplicativo prepara um prompt técnico com os dados preenchidos e usa a foto selecionada.</p>
+    <div class="notice" style="margin-bottom:12px">
+      No celular, tente <b>Compartilhar foto + prompt</b> e escolha o ChatGPT na lista de aplicativos. 
+      No computador, use <b>Copiar prompt e abrir ChatGPT</b> e depois anexe ou cole a foto.
+    </div>
+    <label>Prompt preparado
+      <textarea id="promptChatGPT" style="min-height:230px"></textarea>
+    </label>
+    <div class="actions">
+      <button id="shareChatGPT" class="gold">📤 Compartilhar foto + prompt</button>
+      <button id="openChatGPT" class="primary">Abrir ChatGPT</button>
+      <button id="copyChatGPT" class="ghost">Copiar prompt</button>
+      <button id="fecharChatGPT" class="ghost">Fechar</button>
+    </div>
+    <div id="chatgptStatus" class="small" style="margin-top:10px"></div>
   </div>
 </dialog>
 
@@ -304,7 +324,7 @@ dialog::backdrop{background:rgba(5,16,28,.55);backdrop-filter:blur(4px)}
 
 <script>
 const $=id=>document.getElementById(id);
-let fotoData="", gps=null, avaliacaoAtual=null, deferredPrompt=null, relatorioAtual=null;
+let fotoData="", fotoFile=null, gps=null, avaliacaoAtual=null, deferredPrompt=null, relatorioAtual=null;
 
 const tiposPorSegmento={
  "Infraestrutura":["Ponte","Viaduto","Túnel"],
@@ -398,9 +418,10 @@ $("tipo").onchange=()=>{
 
 $("foto").onchange=e=>{
  const f=e.target.files?.[0]; if(!f)return;
+ fotoFile=f;
  const r=new FileReader(); r.onload=()=>{fotoData=r.result;$("previewImg").src=fotoData;$("preview").classList.remove("hidden")}; r.readAsDataURL(f)
 };
-$("removerFoto").onclick=()=>{fotoData="";$("foto").value="";$("preview").classList.add("hidden")};
+$("removerFoto").onclick=()=>{fotoData="";fotoFile=null;$("foto").value="";$("preview").classList.add("hidden")};
 
 $("gpsBtn").onclick=()=>{
  if(!navigator.geolocation)return alert("Geolocalização não disponível neste navegador.");
@@ -428,13 +449,118 @@ $("avaliar").onclick=()=>{
  $("causas").textContent=avaliacaoAtual.causas;$("ensaios").textContent=avaliacaoAtual.ensaios;$("conduta").textContent=avaliacaoAtual.conduta;
  $("resultado").classList.remove("hidden");$("resultado").scrollIntoView({behavior:"smooth",block:"start"});
 };
-$("ia").onclick=()=>$("iaDialog").showModal();$("fecharIA").onclick=()=>$("iaDialog").close();
+
+function montarPromptChatGPT(){
+ const segmento=$("segmento").value||"não informado";
+ const tipo=$("tipo").value||"não informado";
+ const elemento=$("elemento").value||"não informado";
+ const manifestacao=$("patologia").value||"não informada";
+ const severidade=$("severidade").value||"não informada";
+ const abertura=$("abertura").value?$("abertura").value+" mm":"não informada";
+ const area=$("area").value?$("area").value+" m²":"não informada";
+ const obs=$("obs").value.trim()||"sem observações adicionais";
+ return `Atue como apoio técnico para uma inspeção visual de engenharia civil.
+
+Analise a FOTO ANEXADA de forma preliminar, sem assumir informações que não sejam visíveis e sem substituir a avaliação de um engenheiro responsável.
+
+DADOS DA INSPEÇÃO
+- Segmento: ${segmento}
+- Tipo de estrutura: ${tipo}
+- Elemento: ${elemento}
+- Obra/estrutura: ${$("obra").value||"não informada"}
+- Local/trecho: ${$("local").value||"não informado"}
+- Ambiente: ${$("ambiente").value||"não informado"}
+- Manifestação indicada em campo: ${manifestacao}
+- Nível de atenção visual indicado: ${severidade}
+- Abertura medida: ${abertura}
+- Área afetada estimada: ${area}
+- Observações de campo: ${obs}
+
+Com base principalmente no que for visível na fotografia, responda em português do Brasil com esta estrutura:
+
+1. ANOMALIA VISUAL PROVÁVEL
+2. EVIDÊNCIAS VISUAIS QUE SUSTENTAM A HIPÓTESE
+3. OUTRAS HIPÓTESES POSSÍVEIS
+4. CAUSAS PROVÁVEIS
+5. NÍVEL DE ATENÇÃO VISUAL: baixo, moderado, alto ou crítico — explique
+6. ENSAIOS / VERIFICAÇÕES RECOMENDADAS
+7. CONDUTA INICIAL SUGERIDA
+8. INFORMAÇÕES QUE FALTAM PARA CONCLUIR MELHOR
+
+Não conclua estabilidade ou segurança estrutural apenas pela foto. Se a imagem não permitir uma identificação confiável, diga explicitamente que não é possível concluir e informe quais verificações de campo são necessárias.`;
+}
+$("chatgptBtn").onclick=()=>{
+ if(!fotoData){alert("Adicione uma foto da ocorrência antes de enviar ao ChatGPT.");return}
+ $("promptChatGPT").value=montarPromptChatGPT();
+ $("chatgptStatus").textContent="";
+ $("chatgptDialog").showModal();
+};
+$("fecharChatGPT").onclick=()=>$("chatgptDialog").close();
+
+async function copiarPrompt(){
+ const prompt=$("promptChatGPT").value;
+ try{
+   await navigator.clipboard.writeText(prompt);
+   $("chatgptStatus").textContent="Prompt copiado.";
+   return true;
+ }catch(e){
+   $("promptChatGPT").select();
+   document.execCommand("copy");
+   $("chatgptStatus").textContent="Prompt copiado.";
+   return true;
+ }
+}
+$("copyChatGPT").onclick=copiarPrompt;
+
+$("openChatGPT").onclick=async()=>{
+ await copiarPrompt();
+ window.open("https://chatgpt.com/","_blank","noopener");
+ $("chatgptStatus").textContent="ChatGPT aberto. Cole o prompt e anexe ou cole a foto.";
+};
+
+$("shareChatGPT").onclick=async()=>{
+ const prompt=$("promptChatGPT").value;
+ if(!fotoFile){
+   await copiarPrompt();
+   window.open("https://chatgpt.com/","_blank","noopener");
+   $("chatgptStatus").textContent="Não encontrei o arquivo original da foto. O prompt foi copiado; anexe a foto no ChatGPT.";
+   return;
+ }
+ try{
+   const shareData={title:"Inspeção estrutural - L Engenharia",text:prompt,files:[fotoFile]};
+   if(navigator.share && (!navigator.canShare || navigator.canShare({files:[fotoFile]}))){
+     await navigator.share(shareData);
+     $("chatgptStatus").textContent="Compartilhamento aberto. Escolha o ChatGPT, se ele aparecer na lista.";
+   }else{
+     await copiarPrompt();
+     window.open("https://chatgpt.com/","_blank","noopener");
+     $("chatgptStatus").textContent="Seu navegador não permite compartilhar a foto diretamente. O prompt foi copiado; anexe a foto no ChatGPT.";
+   }
+ }catch(e){
+   if(e.name!=="AbortError"){
+     await copiarPrompt();
+     window.open("https://chatgpt.com/","_blank","noopener");
+     $("chatgptStatus").textContent="Não foi possível compartilhar diretamente. O prompt foi copiado; anexe a foto no ChatGPT.";
+   }
+ }
+};
+
+$("colarChatGPT").onclick=async()=>{
+ try{
+   const t=await navigator.clipboard.readText();
+   if(t)$("chatgptResposta").value=t;
+   else alert("Não há texto na área de transferência.");
+ }catch(e){
+   alert("O navegador não permitiu colar automaticamente. Cole a resposta manualmente no campo.");
+ }
+};
+
 
 function dados(){
  return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),data:new Date().toISOString(),
  segmento:$("segmento").value,obra:$("obra").value,codigo:$("codigo").value,tipo:$("tipo").value,elemento:$("elemento").value,ambiente:$("ambiente").value,
  local:$("local").value,gps,patologia:$("patologia").value,severidade:$("severidade").value,abertura:$("abertura").value,area:$("area").value,
- obs:$("obs").value,fotoData,avaliacao:avaliacaoAtual}
+ obs:$("obs").value,chatgptResposta:$("chatgptResposta").value,fotoData,avaliacao:avaliacaoAtual}
 }
 function hist(){try{return JSON.parse(localStorage.getItem("l_eng_patologia")||"[]")}catch{return[]}}
 function setHist(v){localStorage.setItem("l_eng_patologia",JSON.stringify(v));atualizaStats()}
@@ -466,7 +592,8 @@ function relatorioHTML(d){
  <div class="report-box"><b>Possíveis causas</b><p>${esc(d.avaliacao?.causas||"-")}</p></div>
  <div class="report-box"><b>Ensaios recomendados</b><p>${esc(d.avaliacao?.ensaios||"-")}</p></div>
  <div class="report-box"><b>Conduta sugerida</b><p>${esc(d.avaliacao?.conduta||"-")}</p></div>
- <div class="report-box"><b>Observações</b><p>${esc(d.obs||"-")}</p></div>`
+ <div class="report-box"><b>Observações</b><p>${esc(d.obs||"-")}</p></div>
+ ${d.chatgptResposta?`<div class="report-box"><b>Análise complementar do ChatGPT</b><p>${esc(d.chatgptResposta)}</p></div>`:""}`
 }
 
 function printHTML(d){
@@ -498,7 +625,8 @@ function printHTML(d){
  <div class="p-section"><b>Ensaios recomendados</b><p>${esc(d.avaliacao?.ensaios||"-")}</p></div>
  <div class="p-section"><b>Conduta sugerida</b><p>${esc(d.avaliacao?.conduta||"-")}</p></div>
  <div class="p-section"><b>Observações</b><p>${esc(d.obs||"-")}</p></div>
- <div class="p-notice">Documento preliminar de apoio à inspeção. Validar por profissional habilitado antes de uso técnico definitivo.</div>`;
+ ${d.chatgptResposta?`<div class="p-section"><b>Análise complementar do ChatGPT</b><p>${esc(d.chatgptResposta)}</p></div>`:""}
+ <div class="p-notice">Documento preliminar de apoio à inspeção. A análise do ChatGPT, quando incluída, é complementar e deve ser validada por profissional habilitado antes de uso técnico definitivo.</div>`;
 }
 
 function abrirRelatorio(d){

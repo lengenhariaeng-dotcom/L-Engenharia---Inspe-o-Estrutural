@@ -1,20 +1,26 @@
-L ENGENHARIA - INSPEÇÃO ESTRUTURAL v3
+L ENGENHARIA - INSPEÇÃO ESTRUTURAL v4
 
-ATUALIZAÇÕES
-- Seleção inicial de segmento:
-  1) Infraestrutura: Ponte, Viaduto ou Túnel
-  2) Edificação: Edifício ou Casa
-- Lista de elementos muda automaticamente conforme o tipo escolhido.
-- Relatório de impressão/PDF refeito para A4 retrato.
-- A impressão não usa mais o diálogo do aplicativo, evitando corte, sobreposição e desconfiguração.
-- Histórico antigo continua sendo lido pelo mesmo armazenamento local.
-- Cache do PWA atualizado para carregar a versão nova.
+NOVIDADE: INTEGRAÇÃO COM CHATGPT SEM API
+- Botão "Analisar no ChatGPT".
+- O aplicativo monta automaticamente um prompt técnico usando os dados da inspeção.
+- No celular, tenta compartilhar a foto + prompt pelo menu de compartilhamento do sistema.
+- Se o ChatGPT aparecer como destino de compartilhamento, basta selecioná-lo.
+- No computador, o aplicativo copia o prompt e abre chatgpt.com; depois basta anexar ou colar a foto.
+- Há um campo para colar a resposta do ChatGPT de volta no aplicativo.
+- A resposta fica salva junto com a inspeção e pode aparecer no relatório/PDF.
 
-PARA ATUALIZAR NO GITHUB
+IMPORTANTE
+Esta opção usa a conta normal do ChatGPT do usuário e não utiliza chave de API.
+O envio direto da foto depende do compartilhamento permitido pelo celular/navegador e da disponibilidade do ChatGPT como destino de compartilhamento.
+No computador, por segurança do navegador, normalmente é necessário anexar ou colar a foto no ChatGPT.
+
+MANTIDO
+- Infraestrutura: Ponte, Viaduto e Túnel.
+- Edificação: Edifício e Casa.
+- Relatório em A4.
+- Histórico local.
+
+ATUALIZAÇÃO NO GITHUB
 Substitua:
 - index.html
 - sw.js
-- manifest.json
-Os ícones podem permanecer, mas estão incluídos no pacote completo.
-
-Depois faça Commit changes e aguarde o github-pages ficar verde com horário recente.
